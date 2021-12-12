@@ -10,10 +10,10 @@ $(NAME) : $(OBJ)
 	ar rcs $(NAME) $(OBJ)
 
 compile :
-	cc $(CFLAG) -g main/main.c $(NAME) && ./a.out
+	gcc $(CFLAG) -g main/main.c $(NAME) && ./a.out
 
 .c.o :
-	cc $(CFLAG) -I . -o $@ -c $<
+	gcc $(CFLAG) -I . -o $@ -c $<
 
 clean :
 	rm -fr $(OBJ)
