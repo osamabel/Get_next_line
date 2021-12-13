@@ -1,4 +1,5 @@
-CFLAG = -Wall -Wextra -Werror
+CFLAG = -Wall -Wextra -Werror -g
+B_SIZE = -D BUFFER_SIZE=5
 NAME = get_library.a
 SRC = get_next_line.c get_next_line_utils.c
 
@@ -10,10 +11,10 @@ $(NAME) : $(OBJ)
 	ar rcs $(NAME) $(OBJ)
 
 compile :
-	gcc $(CFLAG) -g main/main.c $(NAME) && ./a.out
+	gcc $(CFLAG) $(B_SIZE) main/main.c $(NAME) && ./a.out
 
 .c.o :
-	gcc $(CFLAG) -I . -o $@ -c $<
+	gcc $(CFLAG) $(B_SIZE) -I . -o $@ -c $<
 
 clean :
 	rm -fr $(OBJ)
