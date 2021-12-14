@@ -6,7 +6,7 @@
 /*   By: obelkhad <obelkhad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 18:11:00 by obelkhad          #+#    #+#             */
-/*   Updated: 2021/12/13 15:39:45 by obelkhad         ###   ########.fr       */
+/*   Updated: 2021/12/14 16:28:38 by obelkhad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,9 @@ typedef struct s_list
 }	t_list;
 
 void	ft_lstadd_bask(t_list **lst, t_list *new);
-t_list	*ft_lstnew(char *content);
+t_list	*ft_lstnew(char *buffred);
 void	ft_lstprint(t_list *lst);
-char	*ft_lst_to_string(t_list *lst, size_t chars_in_line);
+char	*ft_lst_to_string(t_list *lst, size_t chars_in_line, char *buffer, size_t index);
+char	*creat_line(t_list *lst, size_t chars_in_line);
+char	*ft_strjoin(char *line, char * lost_chars);
 #endif
