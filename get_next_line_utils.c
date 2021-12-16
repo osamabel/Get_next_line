@@ -6,7 +6,7 @@
 /*   By: obelkhad <obelkhad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/12 21:38:41 by obelkhad          #+#    #+#             */
-/*   Updated: 2021/12/16 16:29:25 by obelkhad         ###   ########.fr       */
+/*   Updated: 2021/12/16 16:45:45 by obelkhad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ void	creat_line(t_list **lst, char **line)
 	}
 	node = *lst;
 
-	*line = malloc(sizeof(char) * (totale+ 1));
+	*line = malloc(sizeof(char) * (totale + 1));
 
 	while (node)
 	{
@@ -113,7 +113,7 @@ char	*ft_lst_to_string(t_list **lst, char **buf, size_t index)
 	if (i > 0)
 	{
 		lost_chars = malloc(sizeof(char) * (i + 1));
-		strncpy(lost_chars, *buf + index + 1, BUFFER_SIZE + 1 - index);
+		strncpy(lost_chars, *buf + index + 1, BUFFER_SIZE - index);
 	}
 	free(*buf);
 	*buf = NULL;

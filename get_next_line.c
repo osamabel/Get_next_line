@@ -6,11 +6,12 @@
 /*   By: obelkhad <obelkhad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 14:20:15 by obelkhad          #+#    #+#             */
-/*   Updated: 2021/12/16 15:35:37 by obelkhad         ###   ########.fr       */
+/*   Updated: 2021/12/16 20:46:46 by obelkhad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include"get_next_line.h"
+#include <limits.h>
 
 size_t	check_end_of_line(char	*buf)
 {
@@ -45,30 +46,26 @@ void	ft_lstclear(t_list **lst)
 
 char	*get_next_line(int fd)
 {
+	int		readed_char;
+	char	*buf;
 	t_list	*list;
 	t_list	*temp;
-	char	*buf;
-	int		read_value;
 
-	if (fd == -1)
-		return NULL;
-	buf = (char *)malloc(BUFFER_SIZE + 1);
-	read_value = read(fd, buf, BUFFER_SIZE);
-	if (read_value <= 0)
+	buf = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	readed_char = read(fd, buf, BUFFER_SIZE); //6
+	if (readed_char <= 0)
 	{
 		free(buf);
-		return NULL;
+		return (NULL);
 	}
-	buf[read_value] = '\0';
+	buf[readed_char] = '\0';
 	list = ft_lstnew(buf, check_end_of_line(buf));
 	temp = list;
 	while (check_end_of_line(buf) == BUFFER_SIZE)
 	{
-		if (read(fd, buf, BUFFER_SIZE) == -1)
-		{
-			return NULL;
-		}
-		buf[read_value] = '\0';
+		readed_char = read(fd, buf, BUFFER_SIZE);
+		if (readed_char <= 0)
+			return (list = temp, ft_lst_to_string(&list, &buf, BUFFER_SIZE));
 		ft_lstadd_bask(&list, ft_lstnew(buf, check_end_of_line(buf)));
 		list = list->next;
 	}
