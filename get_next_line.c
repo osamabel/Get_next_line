@@ -6,7 +6,7 @@
 /*   By: obelkhad <obelkhad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/10 14:20:15 by obelkhad          #+#    #+#             */
-/*   Updated: 2021/12/16 20:46:46 by obelkhad         ###   ########.fr       */
+/*   Updated: 2021/12/17 13:53:37 by obelkhad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ size_t	check_end_of_line(char	*buf)
 	while (buf[i] && buf[i] != '\n')
 		i++;
 	return i;
+
 }
 
 // todo strlen
@@ -46,28 +47,36 @@ void	ft_lstclear(t_list **lst)
 
 char	*get_next_line(int fd)
 {
-	int		readed_char;
-	char	*buf;
-	t_list	*list;
-	t_list	*temp;
+	static char	*lost_chars;
+	char	*temp;
+	char	*line;
+	int		check;
+	int		len;
 
-	buf = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	readed_char = read(fd, buf, BUFFER_SIZE); //6
-	if (readed_char <= 0)
+	if (lost_chars)
 	{
-		free(buf);
-		return (NULL);
+		len = strlen(lost_chars);
+		check = check_end_of_line(lost_chars);
+		if (check <= len)
+		{
+			temp = lost_chars + check;
+			if (*temp == '\n')
+				temp = lost_chars + check + 1;
+			line = malloc(sizeof(char) * (check + 2));
+			strncpy(line, lost_chars, check + 1);
+			line[check + 1] = '\0';
+			if (*temp)
+			{
+				lost_chars = malloc(sizeof(char) * (len - check));
+				strncpy(lost_chars, temp, len - check);
+				free(temp - check - 1);
+			}else
+			{
+				free(lost_chars);
+				lost_chars = NULL;
+			}
+			return (line);
+		}
 	}
-	buf[readed_char] = '\0';
-	list = ft_lstnew(buf, check_end_of_line(buf));
-	temp = list;
-	while (check_end_of_line(buf) == BUFFER_SIZE)
-	{
-		readed_char = read(fd, buf, BUFFER_SIZE);
-		if (readed_char <= 0)
-			return (list = temp, ft_lst_to_string(&list, &buf, BUFFER_SIZE));
-		ft_lstadd_bask(&list, ft_lstnew(buf, check_end_of_line(buf)));
-		list = list->next;
-	}
-	return (list = temp, ft_lst_to_string(&list, &buf, check_end_of_line(buf)));
+	return (read_and_store(fd, &lost_chars));
 }

@@ -6,7 +6,7 @@
 /*   By: obelkhad <obelkhad@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/12 21:38:41 by obelkhad          #+#    #+#             */
-/*   Updated: 2021/12/16 16:45:45 by obelkhad         ###   ########.fr       */
+/*   Updated: 2021/12/17 13:06:10 by obelkhad         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,30 +92,59 @@ void	ft_strjoin(char **line, char *lost_chars)
 	*(*line + index) = '\0';
 }
 
-char	*ft_lst_to_string(t_list **lst, char **buf, size_t index)
+char	*ft_lst_to_string(t_list **lst, char **buf, char **lost_chars)
 {
-	static char	*lost_chars;
 	char		*line;
 	size_t 		i;
 	size_t 		j;
 
 	i = 0;
-	j = index;
+	j = check_end_of_line(*buf);
 	line = NULL;
-	while (j++ < BUFFER_SIZE - 1)
+	while (j++ < strlen(*buf) - 1)
 		i++;
 	creat_line(lst, &line);
-	if (lost_chars)
+	if (*lost_chars)
 	{
-		ft_strjoin(&line, lost_chars);
-		free(lost_chars);
+		ft_strjoin(&line, *lost_chars);
+		free(*lost_chars);
+		*lost_chars = NULL;
 	}
+	j = check_end_of_line(*buf);
 	if (i > 0)
 	{
-		lost_chars = malloc(sizeof(char) * (i + 1));
-		strncpy(lost_chars, *buf + index + 1, BUFFER_SIZE - index);
+		*lost_chars = malloc(sizeof(char) * (i + 1));
+		strncpy(*lost_chars, (*buf + j + 1), strlen(*buf) - j);
 	}
 	free(*buf);
 	*buf = NULL;
 	return (line);
+}
+
+char	*read_and_store(int fd, char **lost_chars)
+{
+	t_list	*list;
+	t_list	*temp;
+	char	*buf;
+	int		readed_char;
+
+	buf = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	readed_char = read(fd, buf, BUFFER_SIZE); //6
+	if (readed_char <= 0)
+	{
+		free(buf);
+		return (NULL);
+	}
+	buf[readed_char] = '\0';
+	list = ft_lstnew(buf, check_end_of_line(buf));
+	temp = list;
+	while (check_end_of_line(buf) == BUFFER_SIZE)
+	{
+		readed_char = read(fd, buf, BUFFER_SIZE);
+		if (readed_char <= 0)
+			return (list = temp, ft_lst_to_string(&list, (char **) &buf, lost_chars));
+		ft_lstadd_bask(&list, ft_lstnew(buf, check_end_of_line(buf)));
+		list = list->next;
+	}
+	return (list = temp, ft_lst_to_string(&list, (char **) &buf, lost_chars));
 }
